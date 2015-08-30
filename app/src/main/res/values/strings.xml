@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Iotd</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="buttonGetListOfImages">Get List of Images</string>
+    <string name="buttonGetTodaysImage">Get Today\'s Image</string>
+    <string name="buttonViewImage">View Images</string>
+    <string name="buttonDoneListOfImages">Done</string>
+    <string name="title_activity_listofimages">List of Images</string>
+    <string name="title_activity_activity_get_todays_image">ActivityGetTodaysImage</string>
+    <string name="title_activity_get_todays_image">Get Todays Image</string>
+    <string name="buttonDone">Done</string>
+
+    <string name="title_activity_activity_view_images">ActivityViewImages</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="Next">string/button_next</string>
+    <string name="Done">Done</string>
+</resources>
