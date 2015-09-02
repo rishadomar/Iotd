@@ -3,6 +3,7 @@ package com.example.rishad.iotd;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,6 +37,13 @@ import java.util.Date;
 public class ActivityGetTodaysImage extends AppCompatActivity {
     private TextView mTextResult = null;
 
+    class ImageData {
+        public String base = null;
+        public String url = null;
+        public String filename = null;
+        public String description = null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,17 +66,14 @@ public class ActivityGetTodaysImage extends AppCompatActivity {
         }
     }
 
-    private String getTodaysFilename() {
-        return new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".png";
-    }
-
     private Boolean hasTodaysFile() {
-       String todaysFilename = getTodaysFilename();
+        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         File dir = getFilesDir();
         File[] subFiles = dir.listFiles();
         if (subFiles != null) {
             for (File file : subFiles) {
-                if (todaysFilename.equals(file.getName())) {
+                String fileDate = new SimpleDateFormat("yyyy-MM-dd").format(file.lastModified());
+                if (today.equals(fileDate)) {
                     return true;
                 }
             }
@@ -89,9 +94,10 @@ public class ActivityGetTodaysImage extends AppCompatActivity {
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
                         //mTextView.setText("Response is: " + response.substring(0,500));
-                        String imageUrl = "http://www.bing.com" + getImageLink(response);
-                        mTextResult.setText("Response is: " + imageUrl);
-                        setCurrentImage(imageUrl);
+                        ImageData imageData = getImageData(response);
+                        imageData.base = "http://www.bing.com";
+                        mTextResult.setText("Getting: " + imageData.description);
+                        setCurrentImage(imageData);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -103,28 +109,34 @@ public class ActivityGetTodaysImage extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private void setCurrentImage(String imageUrl) {
+    private void setCurrentImage(ImageData imageData) {
         final ImageView imageView = (ImageView) findViewById(R.id.imageDisplay);
-        ImageDownloader imageDownLoader = new ImageDownloader(imageView);
-        imageDownLoader.execute(imageUrl);
+        ImageDownloader imageDownLoader = new ImageDownloader(imageView, imageData.filename);
+        imageDownLoader.execute(imageData.base + "/" + imageData.url);
     }
 
-    private String getImageLink(String jsonResponse) {
+    private ImageData getImageData(String jsonResponse) {
         try {
+            ImageData imageData = new ImageData();
             JSONObject reader = new JSONObject(jsonResponse);
             JSONArray imagesArray = reader.getJSONArray("images");
             JSONObject imagesObject = imagesArray.getJSONObject(0);
-            return imagesObject.getString("url");
+            imageData.url = imagesObject.getString("url");
+            imageData.description = imagesObject.getString("copyright");
+            imageData.filename = new File(imagesObject.getString("url")).getName();
+            return imageData;
         } catch (JSONException e) {
-            return "error";
+            return null;
         }
     }
 
     private class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
+        String mFilename;
 
-        public ImageDownloader(ImageView bmImage) {
+        public ImageDownloader(ImageView bmImage, String filename) {
             this.bmImage = bmImage;
+            this.mFilename = filename;
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -140,11 +152,10 @@ public class ActivityGetTodaysImage extends AppCompatActivity {
         }
 
         protected void onPostExecute(Bitmap result) {
-            String todaysFilename = getTodaysFilename();
             FileOutputStream out = null;
             try {
-                out = openFileOutput(todaysFilename, Context.MODE_PRIVATE);
-                result.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                out = openFileOutput(mFilename, Context.MODE_PRIVATE);
+                result.compress(Bitmap.CompressFormat.JPEG, 100, out); // bmp is your Bitmap instance
                 // PNG is a lossless format, the compression factor (100) is ignored
             } catch (Exception e) {
                 e.printStackTrace();
@@ -158,8 +169,6 @@ public class ActivityGetTodaysImage extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
-
         }
     }
 

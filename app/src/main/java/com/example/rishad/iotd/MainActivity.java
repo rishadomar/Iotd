@@ -37,13 +37,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         Button buttonViewImages = (Button) findViewById(R.id.bViewImages);
         buttonViewImages.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ActivityViewImages.class);
+                startActivity(intent);
+            }
+        });
+
+
+        Button buttonDeleteImages = (Button) findViewById(R.id.bDeleteImages);
+        buttonDeleteImages.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ActivityDeleteImages.class);
                 startActivity(intent);
             }
         });

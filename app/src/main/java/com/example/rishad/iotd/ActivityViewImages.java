@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -132,12 +133,24 @@ public class ActivityViewImages extends Activity {
     }
 
     private String getTodaysFilename() {
-        return new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".png";
+        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        File dir = getFilesDir();
+        File[] subFiles = dir.listFiles();
+        if (subFiles != null) {
+            for (File file : subFiles) {
+                String fileDate = new SimpleDateFormat("yyyy-MM-dd").format(file.lastModified());
+                if (today.equals(fileDate)) {
+                    return file.getName();
+                }
+            }
+        }
+        return null;
     }
 
     private void loadTodaysImage() {
         ImageView imageView = (ImageView) findViewById(R.id.fullscreen_content);
-        Bitmap bm = BitmapFactory.decodeFile(getFilesDir() + "/" + getTodaysFilename());
+        String filenameWithPath = getFilesDir() + "/" + getTodaysFilename();
+        Bitmap bm = BitmapFactory.decodeFile(filenameWithPath);
         imageView.setImageBitmap(bm);
     }
 

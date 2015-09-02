@@ -17,4 +17,6 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="Next">string/button_next</string>
     <string name="Done">Done</string>
+    <string name="title_activity_activity_delete_images">ActivityDeleteImages</string>
+    <string name="buttonDeleteImages">Delete Images</string>
 </resources>

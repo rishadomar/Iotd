@@ -32,6 +32,10 @@
             android:label="@string/title_activity_activity_view_images"
             android:theme="@style/FullscreenTheme" >
         </activity>
+        <activity
+            android:name=".ActivityDeleteImages"
+            android:label="@string/title_activity_activity_delete_images" >
+        </activity>
     </application>
 
 </manifest>
